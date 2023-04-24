@@ -22,6 +22,7 @@ class NegativeMiner(object):
         retriever_score_functions=["none", "cos_sim", "cos_sim"],
         nneg=50,
         use_train_qrels: bool = False,
+        device="cuda:0",
     ):
         if use_train_qrels:
             logger.info("Using labeled qrels to construct the hard-negative data")
@@ -53,7 +54,7 @@ class NegativeMiner(object):
     def _get_doc(self, did):
         return " ".join([self.corpus[did]["title"], self.corpus[did]["text"]])
 
-    def _mine_sbert(self, model_name, score_function):
+    def _mine_sbert(self, model_name, score_function,device="cuda:0"):
         logger.info(f"Mining with {model_name}")
         assert score_function in ["dot", "cos_sim"]
         normalize_embeddings = False
@@ -61,7 +62,7 @@ class NegativeMiner(object):
             normalize_embeddings = True
 
         result = {}
-        sbert = SentenceTransformer(model_name)
+        sbert = SentenceTransformer(model_name,device=device)
         docs = list(map(self._get_doc, self.corpus.keys()))
         dids = np.array(list(self.corpus.keys()))
         doc_embs = sbert.encode(
@@ -125,7 +126,7 @@ class NegativeMiner(object):
             if retriever == "bm25":
                 hard_negatives[retriever] = self._mine_bm25()
             else:
-                hard_negatives[retriever] = self._mine_sbert(retriever, score_function)
+                hard_negatives[retriever] = self._mine_sbert(retriever, score_function,self.device)
 
         logger.info("Combining all the data")
         result_jsonl = []

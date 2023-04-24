@@ -60,6 +60,7 @@ def train(
     use_train_qrels: bool = False,
     gpl_score_function: str = "dot",
     rescale_range: List[float] = None,
+    device: str = "cuda:0",
 ):
     #### Assertions ####
     assert pooling in [None, "mean", "cls", "max"]
@@ -167,6 +168,7 @@ def train(
             ques_per_passage=queries_per_passage,
             bsz=batch_size_generation,
             qgen_prefix=qgen_prefix,
+            device=device,
         )
         corpus, gen_queries, gen_qrels = GenericDataLoader(
             path_to_generated_data, prefix=qgen_prefix
@@ -185,6 +187,7 @@ def train(
             retriever_score_functions=retriever_score_functions,
             nneg=negatives_per_query,
             use_train_qrels=use_train_qrels,
+            device=device,
         )
         miner.run()
 
@@ -233,7 +236,7 @@ def train(
     ):
         logger.info("Now doing training on the generated data with the MarginMSE loss")
         #### It can load checkpoints in both SBERT-format (recommended) and Huggingface-format
-        model: SentenceTransformer = load_sbert(base_ckpt, pooling, max_seq_length)
+        model: SentenceTransformer = load_sbert(base_ckpt, pooling, max_seq_length, device=device)
 
         fpath_gpl_data = os.path.join(path_to_generated_data, gpl_training_data_fname)
         logger.info(f"Load GPL training data from {fpath_gpl_data}")
@@ -423,5 +426,6 @@ if __name__ == "__main__":
         help="Which split to evaluate on",
     )
     parser.add_argument("--use_train_qrels", action="store_true", default=False)
+    parser.add_argument("--device", default="cuda")    
     args = parser.parse_args()
     train(**vars(args))

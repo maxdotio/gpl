@@ -12,6 +12,7 @@ def qgen(
     ques_per_passage=3,
     bsz=32,
     qgen_prefix="qgen",
+    device="cuda:0",
 ):
     #### Provide the data_path where nfcorpus has been downloaded and unzipped
     corpus = GenericDataLoader(data_path).load_corpus()
@@ -34,6 +35,7 @@ def qgen(
             ques_per_passage=ques_per_passage,
             prefix=prefix,
             batch_size=bsz,
+            device=device,
         )
     except RuntimeError as e:
         if "CUDA out of memory" in str(e):
@@ -51,5 +53,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", required=True)
     parser.add_argument("--output_dir", required=True)
+    parser.add_argument("--device", default="cuda:0")
     args = parser.parse_args()
-    qgen(args.data_path, args.output_dir)
+    qgen(args.data_path, args.output_dir, device=args.device)

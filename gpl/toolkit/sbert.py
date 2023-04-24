@@ -19,8 +19,8 @@ def directly_loadable_by_sbert(model: SentenceTransformer):
     return loadable_by_sbert
 
 
-def load_sbert(model_name_or_path, pooling=None, max_seq_length=None):
-    model = SentenceTransformer(model_name_or_path)
+def load_sbert(model_name_or_path, pooling=None, max_seq_length=None,device="cuda:0"):
+    model = SentenceTransformer(model_name_or_path,device=device)
 
     ## Check whether SBERT can load the checkpoint and use it
     loadable_by_sbert = directly_loadable_by_sbert(model)
