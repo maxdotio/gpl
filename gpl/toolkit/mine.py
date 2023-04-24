@@ -50,6 +50,7 @@ class NegativeMiner(object):
                 "`negatives_per_query` > corpus size. Please use a smaller `negatives_per_query`"
             )
             self.nneg = len(self.corpus)
+        self.device=device
 
     def _get_doc(self, did):
         return " ".join([self.corpus[did]["title"], self.corpus[did]["text"]])
