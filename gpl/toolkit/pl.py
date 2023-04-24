@@ -26,10 +26,12 @@ class PseudoLabeler(object):
         batch_size,
         cross_encoder,
         max_seq_length,
+        device="cuda:0",
     ):
+        self.device=device
         assert "hard-negatives.jsonl" in os.listdir(generated_path)
         fpath_hard_negatives = os.path.join(generated_path, "hard-negatives.jsonl")
-        self.cross_encoder = CrossEncoder(cross_encoder)
+        self.cross_encoder = CrossEncoder(cross_encoder,device=device)
         hard_negative_dataset = HardNegativeDataset(
             fpath_hard_negatives, gen_queries, corpus
         )

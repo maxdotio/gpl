@@ -206,6 +206,7 @@ def train(
             batch_size_gpl,
             cross_encoder,
             max_seq_length,
+            device=device
         )
         pseudo_labeler.run()
     # Do rescaling if needed:
