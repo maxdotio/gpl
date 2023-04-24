@@ -18,7 +18,7 @@ def qgen(
     corpus = GenericDataLoader(data_path).load_corpus()
 
     #### question-generation model loading
-    generator = QGen(model=QGenModel(generator_name_or_path))
+    generator = QGen(model=QGenModel(generator_name_or_path,device=device))
 
     #### Query-Generation using Nucleus Sampling (top_k=25, top_p=0.95) ####
     #### https://huggingface.co/blog/how-to-generate
