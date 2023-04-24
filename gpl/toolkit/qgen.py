@@ -35,7 +35,6 @@ def qgen(
             ques_per_passage=ques_per_passage,
             prefix=prefix,
             batch_size=bsz,
-            device=device,
         )
     except RuntimeError as e:
         if "CUDA out of memory" in str(e):
